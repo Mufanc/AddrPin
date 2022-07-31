@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Hotspot IP Fix</string>
+    <string name="module_desc">为移动热点设置静态 IP 地址</string>
+</resources>
