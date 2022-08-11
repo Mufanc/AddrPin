@@ -15,3 +15,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Hotspot IP Fix"
 include ':app'
+include ':easyhook:wrapper'
+include ':easyhook:ksp-xposed'
