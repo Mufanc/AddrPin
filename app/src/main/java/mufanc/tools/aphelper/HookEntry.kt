@@ -4,10 +4,10 @@ import android.net.LinkAddress
 import android.os.Binder
 import android.os.Build
 import android.os.Parcel
-import mufanc.easyhook.wrapper.HookHelper
-import mufanc.easyhook.wrapper.Logger
-import mufanc.easyhook.wrapper.annotation.XposedEntry
-import mufanc.easyhook.wrapper.hook
+import mufanc.easyhook.api.Logger
+import mufanc.easyhook.api.annotation.XposedEntry
+import mufanc.easyhook.api.hook.HookHelper
+import mufanc.easyhook.api.hook.hook
 
 @XposedEntry
 class HookEntry: HookHelper("HotspotFix") {
@@ -20,11 +20,11 @@ class HookEntry: HookHelper("HotspotFix") {
 
     override fun onHook() = handle {
         onLoadPackage(TETHERING_PACKAGE) { lpparam ->
-            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
+            if (Build.VERSION.SDK_INT in setOf(Build.VERSION_CODES.R, Build.VERSION_CODES.S)) {
                 Logger.i("Load: ${lpparam.packageName}")
 
                 // Hook IP 地址分配
-                findClass("android.net.ip.IpServer") hook {
+                findClass("android.net.ip.IpServer").hook {
                     method({ name == "requestIpv4Address" }) {
                         before { param ->
                             // Todo: 以迭代器方式检查调用栈?
@@ -41,19 +41,14 @@ class HookEntry: HookHelper("HotspotFix") {
                 }
 
                 // Hook TetheringService 以实现动态修改
-                val service = findClass("android.net.ITetheringConnector\$Stub")
-                val descriptor = service.getDeclaredField("DESCRIPTOR").apply { isAccessible = true }.get(null)
-                descriptor as String
-
-                service hook {
+                findClass("android.net.ITetheringConnector\$Stub").hook {
                     method({ name == "onTransact" }) {
                         before {  param ->
                             if (param.args[0] != TRANSACT_CODE) return@before
                             if (Binder.getCallingUid() > 2000) return@before
 
                             val (data, reply) = arrayOf(param.args[1] as Parcel, param.args[2] as Parcel)
-
-                            data.enforceInterface(descriptor)
+                            data.enforceInterface("android.net.ITetheringConnector")
 
                             try {
                                 val newIpaddr = data.readString()!!
@@ -81,4 +76,3 @@ class HookEntry: HookHelper("HotspotFix") {
         }
     }
 }
-
