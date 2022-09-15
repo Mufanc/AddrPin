@@ -27,7 +27,6 @@ class HookEntry: HookHelper("HotspotFix") {
                 findClass("android.net.ip.IpServer").hook {
                     method({ name == "requestIpv4Address" }) {
                         before { param ->
-                            // Todo: 以迭代器方式检查调用栈?
                             if (Thread.currentThread().stackTrace.any { it.methodName == "configureIPv4" }) {
                                 Logger.i("Info: replaced hotspot IP address to $ipaddr")
                                 param.result = LinkAddress::class.java
@@ -40,7 +39,7 @@ class HookEntry: HookHelper("HotspotFix") {
                     }
                 }
 
-                // Hook TetheringService 以实现动态修改
+                // Hook TetheringService 以实现动态修改  Todo: 使用 dialog 修改 ip 地址
                 findClass("android.net.ITetheringConnector\$Stub").hook {
                     method({ name == "onTransact" }) {
                         before {  param ->
