@@ -7,5 +7,5 @@
 * 支持动态修改 IP 地址（需重新开启热点）
 
 ```shell
-service call tethering 683262 s16 192.168.43.1/24
+am broadcast -a mufanc.tools.aphelper.IP_ADDRESS -e ipaddr 192.168.43.1/24 
 ```
