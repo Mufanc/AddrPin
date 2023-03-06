@@ -5,12 +5,12 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "mufanc.tools.aphelper"
         minSdk 29
-        targetSdk 32
+        targetSdk 33
     }
 
     buildTypes {

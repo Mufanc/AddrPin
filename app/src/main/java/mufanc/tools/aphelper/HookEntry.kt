@@ -17,6 +17,7 @@ import mufanc.easyhook.api.hook.hook
 import mufanc.easyhook.api.reflect.callMethodAs
 import mufanc.easyhook.api.reflect.callStaticMethod
 
+@Suppress("unused")
 @XposedEntry
 class HookEntry: HookHelper("HotspotFix") {
     companion object {
@@ -28,7 +29,7 @@ class HookEntry: HookHelper("HotspotFix") {
     override fun onHook() = handle {
         Logger.configure(target = +Target.XPOSED_BRIDGE)
 
-        if (Build.VERSION.SDK_INT in setOf(Build.VERSION_CODES.R, Build.VERSION_CODES.S)) {
+        if (Build.VERSION.SDK_INT in (Build.VERSION_CODES.R .. Build.VERSION_CODES.TIRAMISU)) {
             // Hook IP 地址分配
             onLoadPackage(TETHERING_PACKAGE) {
                 findClass("android.net.ip.IpServer").hook {
