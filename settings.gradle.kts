@@ -11,11 +11,16 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://api.xposed.info/" }
+        maven("https://jitpack.io")
+        mavenLocal {
+            content {
+                includeGroup("io.github.libxposed")
+            }
+        }
     }
 }
 
-rootProject.name = "Hotspot IP Fix"
-include ':app'
-include ':easyhook:api'
-include ':easyhook:ksp-xposed'
+rootProject.name = "AddrPin"
+include(":app")
+
+include(":api-stub")
